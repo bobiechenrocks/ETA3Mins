@@ -12,7 +12,7 @@
 @protocol ETALocationMapDelegate <NSObject>
 
 @optional
-- (CLLocationCoordinate2D*)provideDefaultLocation;
+- (CLLocation*)provideDefaultLocation;
 
 @end
 
