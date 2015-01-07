@@ -14,6 +14,7 @@
 		68DB1BCE1A5CE9DF00974293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68DB1BCD1A5CE9DF00974293 /* Images.xcassets */; };
 		68DB1BD11A5CE9DF00974293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 68DB1BCF1A5CE9DF00974293 /* LaunchScreen.xib */; };
 		68DB1BDD1A5CE9DF00974293 /* ETA3MinsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DB1BDC1A5CE9DF00974293 /* ETA3MinsTests.m */; };
+		68DB1BE81A5D042C00974293 /* ETALocationMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DB1BE71A5D042C00974293 /* ETALocationMapViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		68DB1BD61A5CE9DF00974293 /* ETA3MinsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ETA3MinsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		68DB1BDB1A5CE9DF00974293 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		68DB1BDC1A5CE9DF00974293 /* ETA3MinsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ETA3MinsTests.m; sourceTree = "<group>"; };
+		68DB1BE61A5D042C00974293 /* ETALocationMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETALocationMapViewController.h; sourceTree = "<group>"; };
+		68DB1BE71A5D042C00974293 /* ETALocationMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETALocationMapViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,8 @@
 				68DB1BC51A5CE9DF00974293 /* AppDelegate.m */,
 				68DB1BC71A5CE9DF00974293 /* ViewController.h */,
 				68DB1BC81A5CE9DF00974293 /* ViewController.m */,
+				68DB1BE61A5D042C00974293 /* ETALocationMapViewController.h */,
+				68DB1BE71A5D042C00974293 /* ETALocationMapViewController.m */,
 				68DB1BCA1A5CE9DF00974293 /* Main.storyboard */,
 				68DB1BCD1A5CE9DF00974293 /* Images.xcassets */,
 				68DB1BCF1A5CE9DF00974293 /* LaunchScreen.xib */,
@@ -220,6 +225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68DB1BC91A5CE9DF00974293 /* ViewController.m in Sources */,
+				68DB1BE81A5D042C00974293 /* ETALocationMapViewController.m in Sources */,
 				68DB1BC61A5CE9DF00974293 /* AppDelegate.m in Sources */,
 				68DB1BC31A5CE9DF00974293 /* main.m in Sources */,
 			);
