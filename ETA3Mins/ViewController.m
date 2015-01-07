@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "ETALocationMapViewController.h"
 
-@interface ViewController ()
+@interface ViewController () <ETALocationMapDelegate>
 
 /* UI Elements*/
 @property (weak, nonatomic) IBOutlet UITextField *textDestination;
@@ -38,25 +38,13 @@
 #pragma mark - button functions & IBActions
 - (IBAction)onETASlided:(id)sender {
     UISlider* etaSlider = (UISlider*)sender;
-    NSUInteger minutes = (NSUInteger)(etaSlider.value * 10.0) + 1;
-    if (minutes > 10) {
-        minutes = 10;
-    }
-    
-    CGRect frame = self.textETA.frame;
-    CGFloat originalLeft = frame.origin.x + frame.size.width;
-    
     self.textETA.text = [NSString stringWithFormat:@"%lu", (NSUInteger)(etaSlider.value)];
-    
-//    [self.textETA sizeToFit];
-    frame = self.textETA.frame;
-    frame.origin.x = originalLeft - frame.size.width;
-//    self.textETA.frame = frame;
 }
 
 - (IBAction)btnMapViewClicked:(id)sender {
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     ETALocationMapViewController* mapVC = [storyboard instantiateViewControllerWithIdentifier:@"ETALocationMapViewController"];
+    mapVC.delegate = self;
     UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:mapVC];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }

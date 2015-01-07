@@ -15,6 +15,8 @@
 		68DB1BD11A5CE9DF00974293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 68DB1BCF1A5CE9DF00974293 /* LaunchScreen.xib */; };
 		68DB1BDD1A5CE9DF00974293 /* ETA3MinsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DB1BDC1A5CE9DF00974293 /* ETA3MinsTests.m */; };
 		68DB1BE81A5D042C00974293 /* ETALocationMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 68DB1BE71A5D042C00974293 /* ETALocationMapViewController.m */; };
+		68DB1BEA1A5D16DC00974293 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68DB1BE91A5D16DC00974293 /* MapKit.framework */; };
+		68DB1BED1A5D181A00974293 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68DB1BEC1A5D181A00974293 /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +45,8 @@
 		68DB1BDC1A5CE9DF00974293 /* ETA3MinsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ETA3MinsTests.m; sourceTree = "<group>"; };
 		68DB1BE61A5D042C00974293 /* ETALocationMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETALocationMapViewController.h; sourceTree = "<group>"; };
 		68DB1BE71A5D042C00974293 /* ETALocationMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETALocationMapViewController.m; sourceTree = "<group>"; };
+		68DB1BE91A5D16DC00974293 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		68DB1BEC1A5D181A00974293 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +54,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68DB1BED1A5D181A00974293 /* CoreLocation.framework in Frameworks */,
+				68DB1BEA1A5D16DC00974293 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +75,7 @@
 				68DB1BBF1A5CE9DF00974293 /* ETA3Mins */,
 				68DB1BD91A5CE9DF00974293 /* ETA3MinsTests */,
 				68DB1BBE1A5CE9DF00974293 /* Products */,
+				68DB1BEB1A5D180000974293 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,6 +129,15 @@
 				68DB1BDB1A5CE9DF00974293 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		68DB1BEB1A5D180000974293 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				68DB1BEC1A5D181A00974293 /* CoreLocation.framework */,
+				68DB1BE91A5D16DC00974293 /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
