@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "ETALocationMapViewController.h"
 
-@interface ViewController () <ETALocationMapDelegate>
+@interface ViewController () <ETALocationMapDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 /* UI Elements*/
 @property (weak, nonatomic) IBOutlet UITextField *textDestination;
@@ -25,6 +25,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    [self _prepareMainView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -33,6 +35,8 @@
 }
 
 - (void)_prepareMainView {
+    self.textNumber.delegate = self;
+    self.textMessage.delegate = self;
 }
 
 #pragma mark - button functions & IBActions
@@ -70,6 +74,45 @@
     if (location) {
         NSString* latLongString = [NSString stringWithFormat:@"%3.5f, %3.5f", location.coordinate.latitude, location.coordinate.longitude];
         self.textDestination.text = latLongString;
+    }
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    NSString* alertTitle = (textField == self.textNumber)? @"SMS Number" : @"SMS Message";
+    UIAlertView* inputAlertView = [[UIAlertView alloc] initWithTitle:alertTitle message:nil delegate:self
+                                                   cancelButtonTitle:@"Cancel" otherButtonTitles:@"Done", nil];
+    inputAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    UITextField* alertTextField = [inputAlertView textFieldAtIndex:0];
+    alertTextField.text = textField.text;
+    alertTextField.clearButtonMode = UITextFieldViewModeAlways;
+    if (textField == self.textNumber) {
+        alertTextField.keyboardType = UIKeyboardTypeDecimalPad;
+    }
+    alertTextField.returnKeyType = UIReturnKeyDone;
+    
+    /* in order to separate it from the test-field of number & message in the delegate */
+    alertTextField.tag = (textField == self.textNumber)? 1234 : 5678;
+    
+    [inputAlertView show];
+    
+    return NO;
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex != 0) {
+        UITextField* textField = [alertView textFieldAtIndex:0];
+        if ([textField.text length] > 0) {
+            if (textField.tag == 1234) {
+                /* for "number" */
+                self.textNumber.text = textField.text;
+            }
+            else if (textField.tag == 5678) {
+                /* for "message" */
+                self.textMessage.text = textField.text;
+            }
+        }
     }
 }
 
