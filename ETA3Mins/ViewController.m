@@ -58,4 +58,19 @@
 - (IBAction)btnLoadConfigClicked:(id)sender {
 }
 
+#pragma mark - ETALocationMapDelegate
+- (CLLocation*)provideDefaultLocation {
+// testing code: 37.409254,-121.962303 around 2111 Tasman Dr, Santa Clara
+    CLLocation* location = [[CLLocation alloc] initWithLatitude:37.409254 longitude:-121.962303];
+    
+    return location;
+}
+
+- (void)ETALocationMapView:(ETALocationMapViewController *)ETALocationMapView didSelectedLocation:(CLLocation *)location {
+    if (location) {
+        NSString* latLongString = [NSString stringWithFormat:@"%3.5f, %3.5f", location.coordinate.latitude, location.coordinate.longitude];
+        self.textDestination.text = latLongString;
+    }
+}
+
 @end

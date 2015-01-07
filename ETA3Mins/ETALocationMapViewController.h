@@ -9,15 +9,19 @@
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@protocol ETALocationMapDelegate <NSObject>
-
-@optional
-- (CLLocation*)provideDefaultLocation;
-
-@end
+@protocol ETALocationMapDelegate;
 
 @interface ETALocationMapViewController : UIViewController
 
 @property (nonatomic, weak) id<ETALocationMapDelegate>delegate;
+
+@end
+
+
+@protocol ETALocationMapDelegate <NSObject>
+
+@optional
+- (CLLocation*)provideDefaultLocation;
+- (void)ETALocationMapView:(ETALocationMapViewController*)ETALocationMapView didSelectedLocation:(CLLocation*)location;
 
 @end

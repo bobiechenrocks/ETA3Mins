@@ -17,17 +17,20 @@
 /* Controls */
 @property (nonatomic, strong) CLLocation* specifiedInitialLocation;
 @property (nonatomic, strong) CLLocationManager* locationManager;
+@property (nonatomic, strong) CLLocation* pinnedLocation;
 
 @end
 
 @implementation ETALocationMapViewController {
     BOOL m_bZoomedFirstTime;
+    CLLocation* m_pinnedLocation;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self _prepareMapView];
     [self _prepareInitialLocation];
 }
 
@@ -37,7 +40,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.title = @"Select Location";
+    self.title = @"Hold To Pin";
     
     UIBarButtonItem* cancelBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(btnCancelClicked)];
     self.navigationItem.leftBarButtonItem = cancelBarButton;
@@ -46,9 +49,19 @@
     self.navigationItem.rightBarButtonItem = doneBarButton;
 }
 
+- (void)_prepareMapView {
+    UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapViewLongPress:)];
+    [self.map addGestureRecognizer:longPress];
+}
+
 - (void)_prepareInitialLocation {
     if (self.delegate && [self.delegate respondsToSelector:@selector(provideDefaultLocation)]) {
         self.specifiedInitialLocation = [self.delegate provideDefaultLocation];
+    }
+    
+    if (self.specifiedInitialLocation) {
+        self.pinnedLocation = self.specifiedInitialLocation;
+        [self _zoomToCurrentLocation:self.specifiedInitialLocation withAnnotationPin:YES];
     }
     
     [self _prepareLocationManager];
@@ -66,29 +79,59 @@
     });
 }
 
-- (void)_zoomToCurrentLocation:(CLLocation*)currentLocation {
+- (void)_zoomToCurrentLocation:(CLLocation*)location withAnnotationPin:(BOOL)bPin{
     MKCoordinateRegion region;
-    region.center = currentLocation.coordinate;
+    region.center = location.coordinate;
     
     MKCoordinateSpan span;
     span.latitudeDelta = 0.01;
     span.longitudeDelta = 0.01;
     region.span = span;
     
-    [self.map setRegion:region];
+    [self.map setRegion:region animated:YES];
     
     m_bZoomedFirstTime = YES;
+    
+    if (bPin) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self _dropUserPin:location.coordinate];
+        });
+    }
 }
 
-#pragma mark - button functions
+- (void)_dropUserPin:(CLLocationCoordinate2D)location2D {
+    MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+    point.coordinate = location2D;
+    for (id annotation in self.map.annotations) {
+        [self.map removeAnnotation:annotation];
+    }
+    [self.map addAnnotation:point];
+    
+    self.pinnedLocation = [[CLLocation alloc] initWithLatitude:location2D.latitude longitude:location2D.longitude];
+}
+
+#pragma mark - button functions & IBActions
 - (void)btnCancelClicked {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)btnDoneClicked {
-    [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        /* pass selected location via delegate */
-    }];
+    if (self.pinnedLocation && self.delegate && [self.delegate respondsToSelector:@selector(ETALocationMapView:didSelectedLocation:)]) {
+        [self.delegate ETALocationMapView:self didSelectedLocation:self.pinnedLocation];
+    }
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)handleMapViewLongPress:(UIGestureRecognizer*)recognizer {
+    if (recognizer.state != UIGestureRecognizerStateBegan) {
+        return;
+    }
+    
+    CGPoint touchPoint = [recognizer locationInView:self.map];
+    CLLocationCoordinate2D touchMapCoordinate = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
+    
+    [self _dropUserPin:touchMapCoordinate];
 }
 
 #pragma mark - CLLocationManagerDelegate
@@ -113,10 +156,10 @@
     if (!m_bZoomedFirstTime && [locations count] > 0) {
         if (!self.specifiedInitialLocation) {
             CLLocation* location = locations[0];
-            [self _zoomToCurrentLocation:location];
+            [self _zoomToCurrentLocation:location withAnnotationPin:NO];
         }
         else {
-            [self _zoomToCurrentLocation:self.specifiedInitialLocation];
+
         }
     }
     
