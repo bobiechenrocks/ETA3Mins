@@ -42,7 +42,7 @@
     
     self.textDestination.text = @"37.409254, -121.962303";
     self.textNumber.text = @"626-215-3417";
-    self.textMessage.text = @"Hey Sweetheart. ETA 3 Minutes";
+    self.textMessage.text = @"Hey Sweetheart. ETA 3 Minutes!";
 }
 
 - (BOOL)isGoodToStart {

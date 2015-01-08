@@ -8,6 +8,7 @@
 
 #import "ETATrackingViewController.h"
 #import <MapKit/MapKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface ETATrackingViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
 
@@ -71,9 +72,14 @@
         self.labelETA.text = [NSString stringWithFormat:@"%d Minutes", [self.numETAMinutes intValue]];
         
         [self _dropUserPin:self.destinationLocation.coordinate];
-        MKCircle *circle = [MKCircle circleWithCenterCoordinate:self.destinationLocation.coordinate radius:1000];
+        MKCircle *circle = [MKCircle circleWithCenterCoordinate:self.destinationLocation.coordinate radius:500*[self.numETAMinutes intValue]];
         [self.map addOverlay:circle];
     }
+}
+
+- (void)_registerDestinationRegion:(CLLocationCoordinate2D)destinationLocation2D andRadius:(NSUInteger)nRadius {
+    CLCircularRegion* destinationRegion = [[CLCircularRegion alloc] initWithCenter:destinationLocation2D radius:nRadius identifier:@""];
+    [self.locationManager startMonitoringForRegion:destinationRegion];
 }
 
 - (void)_startTracking {
@@ -87,6 +93,8 @@
             self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
             self.locationManager.delegate = self;
         }
+        
+        [self _registerDestinationRegion:self.destinationLocation.coordinate andRadius:500*[self.numETAMinutes intValue]];
         [self.locationManager startUpdatingLocation];
     });
 }
@@ -168,11 +176,24 @@
     }
 }
 
+- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
+    /* Let's send some SMS messages! */
+}
+
+- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error {
+    NSLog(@"%@", [error localizedDescription]);
+}
+
+- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
+    NSLog(@"start region monitoring");
+}
+
 #pragma mark - MKMapViewDelegate
--(MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id)overlay
-{
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id)overlay {
     MKCircleView *circleView = [[MKCircleView alloc] initWithOverlay:overlay];
     circleView.strokeColor = [UIColor redColor];
+    circleView.fillColor = [UIColor redColor];
+    circleView.alpha = 0.3f;
     circleView.lineWidth = 2;
     
     return circleView;
