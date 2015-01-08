@@ -8,8 +8,9 @@
 
 #import "ViewController.h"
 #import "ETALocationMapViewController.h"
+#import "ETATrackingViewController.h"
 
-@interface ViewController () <ETALocationMapDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface ViewController () <ETALocationMapDelegate, ETATrackingViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 /* UI Elements*/
 @property (weak, nonatomic) IBOutlet UITextField *textDestination;
@@ -35,8 +36,18 @@
 }
 
 - (void)_prepareMainView {
+    self.textDestination.delegate = self;
     self.textNumber.delegate = self;
     self.textMessage.delegate = self;
+    
+    self.textDestination.text = @"37.409254, -121.962303";
+    self.textNumber.text = @"626-215-3417";
+    self.textMessage.text = @"Hey Sweetheart. ETA 3 Minutes";
+}
+
+- (BOOL)isGoodToStart {
+    BOOL bGoodToGo = NO;
+    return bGoodToGo;
 }
 
 #pragma mark - button functions & IBActions
@@ -54,6 +65,11 @@
 }
 
 - (IBAction)btnStartTrackingClicked:(id)sender {
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    ETATrackingViewController* trackingVC = [storyboard instantiateViewControllerWithIdentifier:@"ETATrackingViewController"];
+    trackingVC.delegate = self;
+    UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:trackingVC];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
 - (IBAction)btnSaveConfigClicked:(id)sender {
@@ -77,8 +93,31 @@
     }
 }
 
+#pragma mark - ETATrackingViewDelegate
+- (NSDictionary*)provideTrackingTaskInfo {
+    NSArray* latLongArray = [self.textDestination.text componentsSeparatedByString:@","];
+    CLLocation* destinationLocation = nil;
+    if ([latLongArray count] == 2) {
+        destinationLocation = [[CLLocation alloc] initWithLatitude:[(latLongArray[0]) floatValue] longitude:[(latLongArray[1]) floatValue]];
+    }
+    
+    if (destinationLocation == nil || [self.textNumber.text length] <= 0 || [self.textMessage.text length] <= 0) {
+        return nil;
+    }
+    
+    NSDictionary* trackingTaskInfo = @{ @"destination" : destinationLocation,
+                                        @"eta" : [NSNumber numberWithFloat:self.slideETA.value],
+                                        @"number" : self.textNumber.text,
+                                        @"message" : self.textMessage.text };
+    return trackingTaskInfo;
+}
+
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    if (textField == self.textDestination) {
+        return NO;
+    }
+    
     NSString* alertTitle = (textField == self.textNumber)? @"SMS Number" : @"SMS Message";
     UIAlertView* inputAlertView = [[UIAlertView alloc] initWithTitle:alertTitle message:nil delegate:self
                                                    cancelButtonTitle:@"Cancel" otherButtonTitles:@"Done", nil];
