@@ -209,7 +209,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z6w-Ah-W3B">
-                                <rect key="frame" x="0.0" y="168" width="320" height="371"/>
+                                <rect key="frame" x="0.0" y="168" width="320" height="343"/>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Destination:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hgL-tE-1y0">
                                 <rect key="frame" x="16" y="72" width="82" height="21"/>
@@ -255,11 +255,18 @@
                                     <action selector="destinationLocationClicked:" destination="AAb-RU-xZw" eventType="touchUpInside" id="8aU-eF-qw4"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hgf-Ki-a5Y">
+                                <rect key="frame" x="16" y="527" width="288" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="qk6-af-rWa"/>
                     <connections>
+                        <outlet property="labelDebug" destination="hgf-Ki-a5Y" id="CkA-80-9WD"/>
                         <outlet property="labelDestination" destination="qda-du-VkE" id="hYu-lz-yOu"/>
                         <outlet property="labelETA" destination="640-mM-T6D" id="0As-2B-hqa"/>
                         <outlet property="map" destination="z6w-Ah-W3B" id="qgj-AH-JuT"/>

@@ -10,12 +10,13 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface ETATrackingViewController () <CLLocationManagerDelegate, MKMapViewDelegate>
+@interface ETATrackingViewController () <CLLocationManagerDelegate, MKMapViewDelegate, UIAlertViewDelegate>
 
 /* UI ELements */
 @property (weak, nonatomic) IBOutlet UILabel *labelDestination;
 @property (weak, nonatomic) IBOutlet UILabel *labelETA;
 @property (weak, nonatomic) IBOutlet MKMapView *map;
+@property (weak, nonatomic) IBOutlet UILabel *labelDebug;
 
 /* Controls */
 @property (nonatomic, strong) CLLocationManager* locationManager;
@@ -80,6 +81,8 @@
 - (void)_registerDestinationRegion:(CLLocationCoordinate2D)destinationLocation2D andRadius:(NSUInteger)nRadius {
     CLCircularRegion* destinationRegion = [[CLCircularRegion alloc] initWithCenter:destinationLocation2D radius:nRadius identifier:@""];
     [self.locationManager startMonitoringForRegion:destinationRegion];
+    
+    [self _outputDebugMessage:@"Start monitoring"];
 }
 
 - (void)_startTracking {
@@ -126,6 +129,11 @@
             [self _dropUserPin:location.coordinate];
         });
     }
+}
+
+- (void)_outputDebugMessage:(NSString*)debugMessage {
+    self.labelDebug.text = debugMessage;
+    [self.labelDebug sizeToFit];
 }
 
 /*
@@ -177,15 +185,39 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
+    [self _sendETAMessage];
+    
+    [self _outputDebugMessage:@"Entering region"];
+}
+
+- (void)_sendETAMessage {
     /* Let's send some SMS messages! */
-    NSString* apiString = [NSString stringWithFormat:@"http://bobie-twilio.appspot.com/etaTwiMinutes?to=%@&message=%@", self.phoneNumberString, self.smsMessage];
-    apiString = [apiString stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    NSURL* url = [NSURL URLWithString:apiString];
-    NSURLRequest* request = [[NSURLRequest alloc] initWithURL:url];
+    NSString* postString = [NSString stringWithFormat:@"to=%@&message=%@", self.phoneNumberString, self.smsMessage];
+    NSData* postData = [postString dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString* postLengthString = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
+    
+    NSMutableURLRequest* request = [[NSMutableURLRequest alloc] init];
+    [request setURL:[NSURL URLWithString:@"http://bobie-twilio.appspot.com/etaTwiMinutes"]];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:postLengthString forHTTPHeaderField:@"Content-Length"];
+    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:postData];
     
     NSOperationQueue* queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         /* maybe do something later */
+        NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
+        if (httpResponse.statusCode == 200) {
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:@"Approaching destination. Message sent." delegate:self
+                                                  cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+        else {
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:@"Something wrong when sending message." delegate:self
+                                                  cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
     }];
 }
 
@@ -195,6 +227,8 @@
 
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
     NSLog(@"start region monitoring");
+    
+    [self _outputDebugMessage:@"Start region monitoring"];
 }
 
 #pragma mark - MKMapViewDelegate
@@ -208,4 +242,14 @@
     return circleView;
 }
 
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    [self.locationManager stopUpdatingLocation];
+    NSArray* regionArray = [NSArray arrayWithArray:[[self.locationManager monitoredRegions] allObjects]];
+    if ([regionArray count] > 0) {
+        [self.locationManager stopMonitoringForRegion:regionArray[0]];
+    }
+    self.locationManager = nil;
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
 @end
