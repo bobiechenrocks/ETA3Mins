@@ -178,6 +178,15 @@
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region {
     /* Let's send some SMS messages! */
+    NSString* apiString = [NSString stringWithFormat:@"http://bobie-twilio.appspot.com/etaTwiMinutes?to=%@&message=%@", self.phoneNumberString, self.smsMessage];
+    apiString = [apiString stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    NSURL* url = [NSURL URLWithString:apiString];
+    NSURLRequest* request = [[NSURLRequest alloc] initWithURL:url];
+    
+    NSOperationQueue* queue = [[NSOperationQueue alloc] init];
+    [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        /* maybe do something later */
+    }];
 }
 
 - (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error {
