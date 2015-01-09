@@ -209,7 +209,7 @@
         /* maybe do something later */
         NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"%d", httpResponse.statusCode);
+            NSLog(@"%ld", (long)httpResponse.statusCode);
             NSString* alertMessage = (httpResponse.statusCode == 200)? @"Approaching destination. Message sent." : @"Something wrong when sending message.";
             UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:alertMessage delegate:self
                                                   cancelButtonTitle:@"OK" otherButtonTitles:nil];

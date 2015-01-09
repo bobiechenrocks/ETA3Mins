@@ -9,8 +9,9 @@
 #import "ViewController.h"
 #import "ETALocationMapViewController.h"
 #import "ETATrackingViewController.h"
+#import "ETAConfigTableViewController.h"
 
-@interface ViewController () <ETALocationMapDelegate, ETATrackingViewDelegate, UITextFieldDelegate, UIAlertViewDelegate>
+@interface ViewController () <ETALocationMapDelegate, ETATrackingViewDelegate, ETAConfigSelectDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
 /* UI Elements*/
 @property (weak, nonatomic) IBOutlet UITextField *textDestination;
@@ -20,6 +21,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *textMessage;
 
 @end
+
+static NSString* defaultConfigName = @"ETADefaultConfigs";
 
 @implementation ViewController
 
@@ -50,6 +53,10 @@
     return bGoodToGo;
 }
 
+- (void)_initDefaultConfig {
+    
+}
+
 #pragma mark - button functions & IBActions
 - (IBAction)onETASlided:(id)sender {
     UISlider* etaSlider = (UISlider*)sender;
@@ -73,17 +80,62 @@
 }
 
 - (IBAction)btnSaveConfigClicked:(id)sender {
+    UIAlertView* saveAlert = [[UIAlertView alloc] initWithTitle:@"Save Config"
+                                                        message:@"Enter friendly name for the config"
+                                                       delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Done", nil];
+    
+    saveAlert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    UITextField* alertTextField = [saveAlert textFieldAtIndex:0];
+    alertTextField.clearButtonMode = UITextFieldViewModeAlways;
+    alertTextField.returnKeyType = UIReturnKeyDone;
+    
+    saveAlert.tag = 9999;
+    [saveAlert show];
+}
+
+- (void)_postSaveTaskWithConfigName:(NSString*)configName {
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:defaultConfigName]) {
+        [self _initDefaultConfig];
+    }
+    
+    NSArray* defaultConfigArray = [[NSUserDefaults standardUserDefaults] objectForKey:defaultConfigName];
+    NSMutableArray* updatedConfigArray = ([defaultConfigArray count])? [defaultConfigArray mutableCopy] : [NSMutableArray arrayWithCapacity:0];
+    
+    NSDictionary* newConfig = @{ @"name" : configName,
+                                 @"destination" : self.textDestination.text,
+                                 @"eta" : [NSNumber numberWithInt:self.slideETA.value],
+                                 @"number" : self.textNumber.text,
+                                 @"message" : self.textMessage.text };
+    [updatedConfigArray insertObject:newConfig atIndex:0];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:updatedConfigArray forKey:defaultConfigName];
+    
+    UIAlertView* doneAlert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:@"Config saved."
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [doneAlert show];
 }
 
 - (IBAction)btnLoadConfigClicked:(id)sender {
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    ETAConfigTableViewController* configVC = [storyboard instantiateViewControllerWithIdentifier:@"ETAConfigTableViewController"];
+    configVC.delegate = self;
+    UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:configVC];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
 #pragma mark - ETALocationMapDelegate
 - (CLLocation*)provideDefaultLocation {
-// testing code: 37.409254,-121.962303 around 2111 Tasman Dr, Santa Clara
-    CLLocation* location = [[CLLocation alloc] initWithLatitude:37.409254 longitude:-121.962303];
-    
-    return location;
+    NSString* destination = self.textDestination.text;
+    NSArray* latLongArray = [destination componentsSeparatedByString:@","];
+    if ([destination length] > 0 && [latLongArray count] == 2) {
+        CLLocation* location = [[CLLocation alloc] initWithLatitude:[latLongArray[0] floatValue]
+                                                          longitude:[latLongArray[1] floatValue]];
+        
+        return location;
+    }
+    else {
+        return nil;
+    }
 }
 
 - (void)ETALocationMapView:(ETALocationMapViewController *)ETALocationMapView didSelectedLocation:(CLLocation *)location {
@@ -112,6 +164,29 @@
     return trackingTaskInfo;
 }
 
+#pragma mark - ETAConfigSelectDelegate
+- (NSArray*)provideDefaultConfigs {
+    NSArray* configArray = [[NSUserDefaults standardUserDefaults] objectForKey:defaultConfigName];
+    return configArray;
+}
+
+- (void)didSelectDefaultConfid:(NSDictionary *)configDict {
+    NSString* name = configDict[@"name"];
+    if ([name length] > 0) {
+        self.title = name;
+    }
+    
+    NSString* destination = configDict[@"destination"];
+    self.textDestination.text = destination;
+    NSNumber* etaMinutes = configDict[@"eta"];
+    self.slideETA.value = [etaMinutes floatValue];
+    self.textETA.text = [NSString stringWithFormat:@"%lu", (NSUInteger)(self.slideETA.value)];
+    NSString* number = configDict[@"number"];
+    self.textNumber.text = number;
+    NSString* message = configDict[@"message"];
+    self.textMessage.text = message;
+}
+
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
     if (textField == self.textDestination) {
@@ -131,7 +206,7 @@
     alertTextField.returnKeyType = UIReturnKeyDone;
     
     /* in order to separate it from the test-field of number & message in the delegate */
-    alertTextField.tag = (textField == self.textNumber)? 1234 : 5678;
+    inputAlertView.tag = (textField == self.textNumber)? 1234 : 5678;
     
     [inputAlertView show];
     
@@ -143,13 +218,17 @@
     if (buttonIndex != 0) {
         UITextField* textField = [alertView textFieldAtIndex:0];
         if ([textField.text length] > 0) {
-            if (textField.tag == 1234) {
+            if (alertView.tag == 1234) {
                 /* for "number" */
                 self.textNumber.text = textField.text;
             }
-            else if (textField.tag == 5678) {
+            else if (alertView.tag == 5678) {
                 /* for "message" */
                 self.textMessage.text = textField.text;
+            }
+            else if (alertView.tag == 9999) {
+                /* for "save" */
+                [self _postSaveTaskWithConfigName:textField.text];
             }
         }
     }
