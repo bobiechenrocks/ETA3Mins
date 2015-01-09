@@ -208,16 +208,13 @@
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         /* maybe do something later */
         NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
-        if (httpResponse.statusCode == 200) {
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:@"Approaching destination. Message sent." delegate:self
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"%d", httpResponse.statusCode);
+            NSString* alertMessage = (httpResponse.statusCode == 200)? @"Approaching destination. Message sent." : @"Something wrong when sending message.";
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:alertMessage delegate:self
                                                   cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
-        }
-        else {
-            UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:@"Something wrong when sending message." delegate:self
-                                                  cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alert show];
-        }
+        });
     }];
 }
 
