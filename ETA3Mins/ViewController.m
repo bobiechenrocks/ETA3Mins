@@ -43,9 +43,9 @@ static NSString* defaultConfigName = @"ETADefaultConfigs";
     self.textNumber.delegate = self;
     self.textMessage.delegate = self;
     
-    self.textDestination.text = @"37.409254, -121.962303";
-    self.textNumber.text = @"626-215-3417";
-    self.textMessage.text = @"Hey Sweetheart. ETA 3 Minutes!";
+    self.textDestination.text = @"37.783486, -122.396147";//@"37.409254, -121.962303";
+    self.textNumber.text = @"626-461-2675";//@"626-215-3417";
+    self.textMessage.text = @"Hoot Hoot! Twilions :)";//@"Hey Sweetheart. ETA 3 Minutes!";
 }
 
 - (BOOL)isGoodToStart {

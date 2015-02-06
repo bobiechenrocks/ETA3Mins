@@ -29,6 +29,9 @@
 
 @implementation ETATrackingViewController {
     BOOL m_bZoomedFirstTime;
+    UIBackgroundTaskIdentifier m_bgTask;
+    NSTimer* m_checkLocationTimer;
+    int m_checkLocationInterval;
 }
 
 - (void)viewDidLoad {
@@ -36,6 +39,7 @@
     // Do any additional setup after loading the view.
     
     [self _prepareMapView];
+    [self _prepareBackgroundTaskManager];
     [self _prepareToStart];
     [self _startTracking];
 }
@@ -86,6 +90,7 @@
 }
 
 - (void)_startTracking {
+    m_checkLocationInterval = 5;
     [self _prepareLocationManager];
 }
 
@@ -95,9 +100,11 @@
             self.locationManager = [[CLLocationManager alloc] init];
             self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
             self.locationManager.delegate = self;
+            self.locationManager.pausesLocationUpdatesAutomatically = YES;
         }
         
         [self _registerDestinationRegion:self.destinationLocation.coordinate andRadius:500*[self.numETAMinutes intValue]];
+        [self.locationManager startMonitoringSignificantLocationChanges];
         [self.locationManager startUpdatingLocation];
     });
 }
@@ -136,6 +143,13 @@
     [self.labelDebug sizeToFit];
 }
 
+- (void)_prepareBackgroundTaskManager {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidEnterBackground:)
+                                                 name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+
 /*
 #pragma mark - Navigation
 
@@ -156,7 +170,86 @@
 }
 
 - (void)btnStopClicked {
+    [self.locationManager stopUpdatingLocation];
+    NSArray* regionArray = [NSArray arrayWithArray:[[self.locationManager monitoredRegions] allObjects]];
+    if ([regionArray count] > 0) {
+        [self.locationManager stopMonitoringForRegion:regionArray[0]];
+    }
+    self.locationManager = nil;
+    
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - location-manager background task handler
+- (void)_applicationDidEnterBackground:(NSNotification*)notification {
+    if([self _isLocationServiceAvailable]==YES){
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self _startCheckLocationTimer];
+            [self _startBackgroundTask];
+        });
+    }
+}
+
+- (void)_applicationDidBecomeActive:(NSNotification*)notification {
+    [self _stopBackgroundTask];
+//    if([self _isLocationServiceAvailable]==NO) {
+//        NSError *error = [NSError errorWithDomain:@"com.bobiestudio" code:1
+//                                         userInfo:[NSDictionary dictionaryWithObject:@"Authorization status denied"
+//                                                                              forKey:NSLocalizedDescriptionKey]];
+//
+//        if (self.delegate && [self.delegate respondsToSelector:@selector(scheduledLocationManageDidFailWithError:)]) {
+//            [self.delegate scheduledLocationManageDidFailWithError:error];
+//        }
+//    }
+}
+
+-(BOOL)_isLocationServiceAvailable
+{
+    if([CLLocationManager locationServicesEnabled]==NO ||
+       [CLLocationManager authorizationStatus]==kCLAuthorizationStatusDenied ||
+       [CLLocationManager authorizationStatus]==kCLAuthorizationStatusRestricted){
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+- (void)_startBackgroundTask {
+    [self _stopBackgroundTask];
+    UIBackgroundRefreshStatus bgRefreshStatus = [[UIApplication sharedApplication] backgroundRefreshStatus];
+    m_bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        //in case bg task is killed faster than expected, try to start Location Service
+        [self _timerEvent:m_checkLocationTimer];
+    }];
+}
+
+- (void)_stopBackgroundTask {
+    if(m_bgTask!=UIBackgroundTaskInvalid){
+        [[UIApplication sharedApplication] endBackgroundTask:m_bgTask];
+        m_bgTask = UIBackgroundTaskInvalid;
+    }
+}
+
+- (void)_timerEvent:(NSTimer*)theTimer
+{
+    [self _stopCheckLocationTimer];
+    [self.locationManager startUpdatingLocation];
+    [self.locationManager startMonitoringSignificantLocationChanges];
+    
+    // in iOS 7 we need to stop background task with delay, otherwise location service won't start
+    [self performSelector:@selector(_stopBackgroundTask) withObject:nil afterDelay:1];
+}
+
+-(void)_startCheckLocationTimer {
+    [self _stopCheckLocationTimer];
+    m_checkLocationTimer = [NSTimer scheduledTimerWithTimeInterval:m_checkLocationInterval target:self selector:@selector(_timerEvent:) userInfo:NULL repeats:YES];
+}
+
+-(void)_stopCheckLocationTimer {
+    if(m_checkLocationTimer){
+        [m_checkLocationTimer invalidate];
+        m_checkLocationTimer=nil;
+    }
 }
 
 #pragma mark - CLLocationManagerDelegate
@@ -169,8 +262,11 @@
         return;
     }
     else if (status == kCLAuthorizationStatusNotDetermined) {
-        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-            [self.locationManager requestAlwaysAuthorization];
+//        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+//            [self.locationManager requestAlwaysAuthorization];
+//        }
+        if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            [self.locationManager requestWhenInUseAuthorization];
         }
     }
     
