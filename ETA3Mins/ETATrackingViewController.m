@@ -10,13 +10,14 @@
 #import <MapKit/MapKit.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface ETATrackingViewController () <CLLocationManagerDelegate, MKMapViewDelegate, UIAlertViewDelegate>
+@interface ETATrackingViewController () <CLLocationManagerDelegate, MKMapViewDelegate, UIAlertViewDelegate, UIGestureRecognizerDelegate>
 
 /* UI ELements */
 @property (weak, nonatomic) IBOutlet UILabel *labelDestination;
 @property (weak, nonatomic) IBOutlet UILabel *labelETA;
 @property (weak, nonatomic) IBOutlet MKMapView *map;
 @property (weak, nonatomic) IBOutlet UILabel *labelDebug;
+@property (weak, nonatomic) IBOutlet UISwitch *switchStickToUser;
 
 /* Controls */
 @property (nonatomic, strong) CLLocationManager* locationManager;
@@ -32,6 +33,7 @@
     UIBackgroundTaskIdentifier m_bgTask;
     NSTimer* m_checkLocationTimer;
     int m_checkLocationInterval;
+    BOOL m_bStickToUser;
 }
 
 - (void)viewDidLoad {
@@ -57,7 +59,13 @@
 }
 
 - (void)_prepareMapView {
+    m_bZoomedFirstTime = NO;
+    m_bStickToUser = YES;
     self.map.delegate = self;
+    
+    UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didDragMap:)];
+    [panGesture setDelegate:self];
+    [self.map addGestureRecognizer:panGesture];
 }
 
 - (void)_prepareToStart {
@@ -180,6 +188,13 @@
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (IBAction)stickToUserSwitched:(id)sender {
+    m_bStickToUser = self.switchStickToUser.on;
+    if (m_bStickToUser) {
+        [self _zoomToCurrentLocation:self.locationManager.location withAnnotationPin:NO];
+    }
+}
+
 #pragma mark - location-manager background task handler
 - (void)_applicationDidEnterBackground:(NSNotification*)notification {
     if([self _isLocationServiceAvailable]==YES){
@@ -192,15 +207,6 @@
 
 - (void)_applicationDidBecomeActive:(NSNotification*)notification {
     [self _stopBackgroundTask];
-//    if([self _isLocationServiceAvailable]==NO) {
-//        NSError *error = [NSError errorWithDomain:@"com.bobiestudio" code:1
-//                                         userInfo:[NSDictionary dictionaryWithObject:@"Authorization status denied"
-//                                                                              forKey:NSLocalizedDescriptionKey]];
-//
-//        if (self.delegate && [self.delegate respondsToSelector:@selector(scheduledLocationManageDidFailWithError:)]) {
-//            [self.delegate scheduledLocationManageDidFailWithError:error];
-//        }
-//    }
 }
 
 -(BOOL)_isLocationServiceAvailable
@@ -262,19 +268,21 @@
         return;
     }
     else if (status == kCLAuthorizationStatusNotDetermined) {
-//        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-//            [self.locationManager requestAlwaysAuthorization];
-//        }
+        if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            [self.locationManager requestAlwaysAuthorization];
+        }
+        /*
         if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
             [self.locationManager requestWhenInUseAuthorization];
         }
+        */
     }
     
     [self.locationManager startUpdatingLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    if (!m_bZoomedFirstTime && [locations count] > 0) {
+    if (m_bStickToUser && [locations count] > 0) {
         CLLocation* location = locations[0];
         [self _zoomToCurrentLocation:location withAnnotationPin:NO];
     }
@@ -321,7 +329,19 @@
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region {
     NSLog(@"start region monitoring");
     
-    [self _outputDebugMessage:@"Start region monitoring"];
+    [self _outputDebugMessage:@"Monitoring region"];
+}
+
+#pragma mark - gesture-recognizer on mapView
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (void)didDragMap:(UIGestureRecognizer*)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateEnded){
+        self.switchStickToUser.on = NO;
+        [self stickToUserSwitched:nil];
+    }
 }
 
 #pragma mark - MKMapViewDelegate

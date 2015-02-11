@@ -262,6 +262,18 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Stick" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRh-9V-wGO">
+                                <rect key="frame" x="269" y="101" width="35" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lsh-2d-eql">
+                                <rect key="frame" x="209" y="96" width="51" height="31"/>
+                                <connections>
+                                    <action selector="stickToUserSwitched:" destination="AAb-RU-xZw" eventType="valueChanged" id="1sO-Zu-MQQ"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -271,6 +283,7 @@
                         <outlet property="labelDestination" destination="qda-du-VkE" id="hYu-lz-yOu"/>
                         <outlet property="labelETA" destination="640-mM-T6D" id="0As-2B-hqa"/>
                         <outlet property="map" destination="z6w-Ah-W3B" id="qgj-AH-JuT"/>
+                        <outlet property="switchStickToUser" destination="lsh-2d-eql" id="leY-Za-2ee"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HGR-5V-6qT" userLabel="First Responder" sceneMemberID="firstResponder"/>
