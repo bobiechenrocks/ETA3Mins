@@ -130,14 +130,18 @@
     MKCoordinateRegion region;
     region.center = location.coordinate;
     
-    MKCoordinateSpan span;
-    span.latitudeDelta = 0.03;
-    span.longitudeDelta = 0.03;
-    region.span = span;
+    if (!m_bZoomedFirstTime) {
+        MKCoordinateSpan span;
+        span.latitudeDelta = 0.03;
+        span.longitudeDelta = 0.03;
+        region.span = span;
+        m_bZoomedFirstTime = YES;
+    }
+    else {
+        region.span = self.map.region.span;
+    }
     
     [self.map setRegion:region animated:YES];
-    
-    m_bZoomedFirstTime = YES;
     
     if (bPin) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -282,7 +286,7 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    if (m_bStickToUser && [locations count] > 0) {
+    if (!m_bZoomedFirstTime && [locations count] > 0) {
         CLLocation* location = locations[0];
         [self _zoomToCurrentLocation:location withAnnotationPin:NO];
     }
