@@ -62,10 +62,6 @@
     m_bZoomedFirstTime = NO;
     m_bStickToUser = YES;
     self.map.delegate = self;
-    
-    UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didDragMap:)];
-    [panGesture setDelegate:self];
-    [self.map addGestureRecognizer:panGesture];
 }
 
 - (void)_prepareToStart {
@@ -135,7 +131,17 @@
         span.latitudeDelta = 0.03;
         span.longitudeDelta = 0.03;
         region.span = span;
-        m_bZoomedFirstTime = YES;
+        
+        /* delay adding pan-gesture recognizer after the map is zoomed at first time location-update */
+        UIPanGestureRecognizer* panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(didDragMap:)];
+        [panGesture setDelegate:self];
+        [self.map addGestureRecognizer:panGesture];
+        
+        [self.locationManager stopUpdatingLocation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            m_bZoomedFirstTime = YES;
+            [self.locationManager startUpdatingLocation];
+        });
     }
     else {
         region.span = self.map.region.span;
@@ -286,7 +292,10 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    if (!m_bZoomedFirstTime && [locations count] > 0) {
+    if (!m_bZoomedFirstTime) {
+        [self.locationManager stopUpdatingLocation];
+    }
+    if ((!m_bZoomedFirstTime || m_bStickToUser) && [locations count] > 0) {
         CLLocation* location = locations[0];
         [self _zoomToCurrentLocation:location withAnnotationPin:NO];
     }
