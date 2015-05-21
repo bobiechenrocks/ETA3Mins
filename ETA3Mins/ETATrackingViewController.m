@@ -320,6 +320,8 @@
     [request setValue:postLengthString forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:postData];
+    [request setTimeoutInterval:10.0f];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
     
     NSOperationQueue* queue = [[NSOperationQueue alloc] init];
     [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -328,6 +330,16 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"%ld", (long)httpResponse.statusCode);
             NSString* alertMessage = (httpResponse.statusCode == 200)? @"Approaching destination. Message sent." : @"Something wrong when sending message.";
+            if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
+                UILocalNotification* notification = [[UILocalNotification alloc] init];
+                NSArray* oldNotifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
+                if ([oldNotifications count] > 0) {
+                    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+                }
+                notification.alertBody = alertMessage;
+                notification.fireDate = [NSDate date];
+                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+            }
             UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:alertMessage delegate:self
                                                   cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];

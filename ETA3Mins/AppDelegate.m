@@ -17,6 +17,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+        /* iOS 8.0 later */
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|
+                                                                                                    UIUserNotificationTypeBadge|
+                                                                                                    UIUserNotificationTypeSound
+                                                                                        categories:nil]];
+    }
+    
     return YES;
 }
 
