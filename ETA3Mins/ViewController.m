@@ -200,9 +200,9 @@ static NSString* defaultConfigName = @"ETADefaultConfigs";
     UITextField* alertTextField = [inputAlertView textFieldAtIndex:0];
     alertTextField.text = textField.text;
     alertTextField.clearButtonMode = UITextFieldViewModeAlways;
-    if (textField == self.textNumber) {
-        alertTextField.keyboardType = UIKeyboardTypeDecimalPad;
-    }
+//    if (textField == self.textNumber) {
+//        alertTextField.keyboardType = UIKeyboardTypeDecimalPad;
+//    }
     alertTextField.returnKeyType = UIReturnKeyDone;
     
     /* in order to separate it from the test-field of number & message in the delegate */

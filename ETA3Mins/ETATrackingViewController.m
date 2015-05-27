@@ -56,6 +56,9 @@
     
     UIBarButtonItem* stopBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self action:@selector(btnStopClicked)];
     self.navigationItem.leftBarButtonItem = stopBarButton;
+    
+    UIBarButtonItem* fireBarButton = [[UIBarButtonItem alloc] initWithTitle:@"Fire" style:UIBarButtonItemStylePlain target:self action:@selector(fireSMS)];
+    self.navigationItem.rightBarButtonItem = fireBarButton;
 }
 
 - (void)_prepareMapView {
@@ -203,6 +206,10 @@
     if (m_bStickToUser) {
         [self _zoomToCurrentLocation:self.locationManager.location withAnnotationPin:NO];
     }
+}
+
+- (void)fireSMS {
+    [self _sendETAMessage];
 }
 
 #pragma mark - location-manager background task handler
