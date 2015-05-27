@@ -40,6 +40,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     self.title = @"Hold To Pin";
     
     UIBarButtonItem* cancelBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(btnCancelClicked)];
@@ -132,6 +134,10 @@
     CLLocationCoordinate2D touchMapCoordinate = [self.map convertPoint:touchPoint toCoordinateFromView:self.map];
     
     [self _dropUserPin:touchMapCoordinate];
+}
+
+- (IBAction)currentLocationClicked:(id)sender {
+    [self _zoomToCurrentLocation:self.locationManager.location withAnnotationPin:NO];
 }
 
 #pragma mark - CLLocationManagerDelegate

@@ -19,6 +19,7 @@
 		68DB1BED1A5D181A00974293 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68DB1BEC1A5D181A00974293 /* CoreLocation.framework */; };
 		8F2B62E61A5DEB78007BB4B6 /* ETATrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B62E51A5DEB78007BB4B6 /* ETATrackingViewController.m */; };
 		8F91C7631B0E967D005585CF /* icon_original.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F91C7621B0E967D005585CF /* icon_original.png */; };
+		8FAA684D1B1647E000F182BB /* Near_Me@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FAA684C1B1647E000F182BB /* Near_Me@2x.png */; };
 		8FC544B91A607CF80081D3DC /* ETAConfigTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC544B81A607CF80081D3DC /* ETAConfigTableViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		8F2B62E41A5DEB78007BB4B6 /* ETATrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETATrackingViewController.h; sourceTree = "<group>"; };
 		8F2B62E51A5DEB78007BB4B6 /* ETATrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETATrackingViewController.m; sourceTree = "<group>"; };
 		8F91C7621B0E967D005585CF /* icon_original.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_original.png; path = ../../../../Desktop/ETATwiMinutes_icons/v3/icon_original.png; sourceTree = "<group>"; };
+		8FAA684C1B1647E000F182BB /* Near_Me@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Near_Me@2x.png"; sourceTree = "<group>"; };
 		8FC544B71A607CF80081D3DC /* ETAConfigTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETAConfigTableViewController.h; sourceTree = "<group>"; };
 		8FC544B81A607CF80081D3DC /* ETAConfigTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETAConfigTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,6 +115,7 @@
 				68DB1BCD1A5CE9DF00974293 /* Images.xcassets */,
 				68DB1BCF1A5CE9DF00974293 /* LaunchScreen.xib */,
 				8F91C7621B0E967D005585CF /* icon_original.png */,
+				8FAA684C1B1647E000F182BB /* Near_Me@2x.png */,
 				68DB1BC01A5CE9DF00974293 /* Supporting Files */,
 			);
 			path = ETA3Mins;
@@ -241,6 +244,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FAA684D1B1647E000F182BB /* Near_Me@2x.png in Resources */,
 				68DB1BCC1A5CE9DF00974293 /* Main.storyboard in Resources */,
 				68DB1BD11A5CE9DF00974293 /* LaunchScreen.xib in Resources */,
 				8F91C7631B0E967D005585CF /* icon_original.png in Resources */,

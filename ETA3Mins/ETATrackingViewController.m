@@ -52,6 +52,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     self.title = @"Tracking";
     
     UIBarButtonItem* stopBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self action:@selector(btnStopClicked)];
@@ -239,7 +241,6 @@
 
 - (void)_startBackgroundTask {
     [self _stopBackgroundTask];
-    UIBackgroundRefreshStatus bgRefreshStatus = [[UIApplication sharedApplication] backgroundRefreshStatus];
     m_bgTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         //in case bg task is killed faster than expected, try to start Location Service
         [self _timerEvent:m_checkLocationTimer];

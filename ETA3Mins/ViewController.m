@@ -60,7 +60,7 @@ static NSString* defaultConfigName = @"ETADefaultConfigs";
 #pragma mark - button functions & IBActions
 - (IBAction)onETASlided:(id)sender {
     UISlider* etaSlider = (UISlider*)sender;
-    self.textETA.text = [NSString stringWithFormat:@"%lu", (NSUInteger)(etaSlider.value)];
+    self.textETA.text = [NSString stringWithFormat:@"%lu", (unsigned long)(etaSlider.value)];
 }
 
 - (IBAction)btnMapViewClicked:(id)sender {
@@ -200,9 +200,6 @@ static NSString* defaultConfigName = @"ETADefaultConfigs";
     UITextField* alertTextField = [inputAlertView textFieldAtIndex:0];
     alertTextField.text = textField.text;
     alertTextField.clearButtonMode = UITextFieldViewModeAlways;
-//    if (textField == self.textNumber) {
-//        alertTextField.keyboardType = UIKeyboardTypeDecimalPad;
-//    }
     alertTextField.returnKeyType = UIReturnKeyDone;
     
     /* in order to separate it from the test-field of number & message in the delegate */

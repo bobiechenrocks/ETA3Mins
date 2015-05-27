@@ -29,6 +29,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     self.title = @"Select Config";
     
     UIBarButtonItem* stopBarButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self action:@selector(btnCancelClicked)];
@@ -84,7 +86,12 @@
         }
         
         cell.textLabel.text = configName;
-        NSString* detailString = [NSString stringWithFormat:@"%@, %@", config[@"number"], config[@"message"]];
+        NSString *number = config[@"number"];
+        NSArray *numbers = [number componentsSeparatedByString:@";"];
+        if ([numbers count] > 1) {
+            number = [NSString stringWithFormat:@"%@...(%lu)", numbers[0], (unsigned long)[numbers count]];
+        }
+        NSString* detailString = [NSString stringWithFormat:@"%@, %@", number, config[@"message"]];
         cell.detailTextLabel.text = detailString;
     }
     
