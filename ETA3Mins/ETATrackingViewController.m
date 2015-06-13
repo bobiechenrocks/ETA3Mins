@@ -346,6 +346,7 @@
                 }
                 notification.alertBody = alertMessage;
                 notification.fireDate = [NSDate date];
+                notification.applicationIconBadgeNumber = 1;
                 [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
             }
             UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ahoy" message:alertMessage delegate:self
