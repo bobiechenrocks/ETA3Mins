@@ -18,7 +18,7 @@
 		68DB1BEA1A5D16DC00974293 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68DB1BE91A5D16DC00974293 /* MapKit.framework */; };
 		68DB1BED1A5D181A00974293 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68DB1BEC1A5D181A00974293 /* CoreLocation.framework */; };
 		8F2B62E61A5DEB78007BB4B6 /* ETATrackingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B62E51A5DEB78007BB4B6 /* ETATrackingViewController.m */; };
-		8F91C7631B0E967D005585CF /* icon_original.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F91C7621B0E967D005585CF /* icon_original.png */; };
+		8F6E1FED1BB66E3300C62CA8 /* icon_original.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F6E1FEC1BB66E3300C62CA8 /* icon_original.png */; settings = {ASSET_TAGS = (); }; };
 		8FAA684D1B1647E000F182BB /* Near_Me@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FAA684C1B1647E000F182BB /* Near_Me@2x.png */; };
 		8FC544B91A607CF80081D3DC /* ETAConfigTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FC544B81A607CF80081D3DC /* ETAConfigTableViewController.m */; };
 /* End PBXBuildFile section */
@@ -53,7 +53,7 @@
 		68DB1BEC1A5D181A00974293 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8F2B62E41A5DEB78007BB4B6 /* ETATrackingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETATrackingViewController.h; sourceTree = "<group>"; };
 		8F2B62E51A5DEB78007BB4B6 /* ETATrackingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETATrackingViewController.m; sourceTree = "<group>"; };
-		8F91C7621B0E967D005585CF /* icon_original.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon_original.png; path = ../../../../Desktop/ETATwiMinutes_icons/v3/icon_original.png; sourceTree = "<group>"; };
+		8F6E1FEC1BB66E3300C62CA8 /* icon_original.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_original.png; sourceTree = SOURCE_ROOT; };
 		8FAA684C1B1647E000F182BB /* Near_Me@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Near_Me@2x.png"; sourceTree = "<group>"; };
 		8FC544B71A607CF80081D3DC /* ETAConfigTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ETAConfigTableViewController.h; sourceTree = "<group>"; };
 		8FC544B81A607CF80081D3DC /* ETAConfigTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ETAConfigTableViewController.m; sourceTree = "<group>"; };
@@ -114,8 +114,8 @@
 				68DB1BCA1A5CE9DF00974293 /* Main.storyboard */,
 				68DB1BCD1A5CE9DF00974293 /* Images.xcassets */,
 				68DB1BCF1A5CE9DF00974293 /* LaunchScreen.xib */,
-				8F91C7621B0E967D005585CF /* icon_original.png */,
 				8FAA684C1B1647E000F182BB /* Near_Me@2x.png */,
+				8F6E1FEC1BB66E3300C62CA8 /* icon_original.png */,
 				68DB1BC01A5CE9DF00974293 /* Supporting Files */,
 			);
 			path = ETA3Mins;
@@ -205,6 +205,7 @@
 				TargetAttributes = {
 					68DB1BBC1A5CE9DF00974293 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = P99CUXQH6A;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -244,10 +245,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F6E1FED1BB66E3300C62CA8 /* icon_original.png in Resources */,
 				8FAA684D1B1647E000F182BB /* Near_Me@2x.png in Resources */,
 				68DB1BCC1A5CE9DF00974293 /* Main.storyboard in Resources */,
 				68DB1BD11A5CE9DF00974293 /* LaunchScreen.xib in Resources */,
-				8F91C7631B0E967D005585CF /* icon_original.png in Resources */,
 				68DB1BCE1A5CE9DF00974293 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -395,10 +396,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ETA3Mins/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -406,10 +410,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = ETA3Mins/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

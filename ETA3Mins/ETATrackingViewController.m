@@ -337,7 +337,7 @@
         NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse*)response;
         dispatch_async(dispatch_get_main_queue(), ^{
             NSLog(@"%ld", (long)httpResponse.statusCode);
-            NSString* alertMessage = (httpResponse.statusCode == 200)? @"Approaching destination. Message sent." : @"Something wrong when sending message.";
+            NSString* alertMessage = (httpResponse.statusCode == 200)? @"Approaching destination.\nMessage sent." : @"Something wrong when\nsending message.";
             if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive) {
                 UILocalNotification* notification = [[UILocalNotification alloc] init];
                 NSArray* oldNotifications = [[UIApplication sharedApplication] scheduledLocalNotifications];
