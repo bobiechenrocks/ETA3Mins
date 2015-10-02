@@ -12,6 +12,7 @@
 @interface ETATrackingViewController : UIViewController
 
 @property (nonatomic, weak) id<ETATrackingViewDelegate>delegate;
+@property (nonatomic, assign) BOOL bFireImmediately;
 
 @end
 

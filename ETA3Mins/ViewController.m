@@ -10,6 +10,7 @@
 #import "ETALocationMapViewController.h"
 #import "ETATrackingViewController.h"
 #import "ETAConfigTableViewController.h"
+#import "AppDelegate.h"
 
 @interface ViewController () <ETALocationMapDelegate, ETATrackingViewDelegate, ETAConfigSelectDelegate, UITextFieldDelegate, UIAlertViewDelegate>
 
@@ -24,13 +25,42 @@
 
 static NSString* defaultConfigName = @"ETADefaultConfigs";
 
-@implementation ViewController
+@implementation ViewController {
+    BOOL m_bJustfire;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
     [self _prepareMainView];
+    
+    m_bJustfire = NO;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAtoptechShortcut:) name:ETAShortcutNotificationAtoptech object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleJustFireShortcut:) name:ETAShortcutNotificationJustFire object:nil];
+}
+
+- (void)handleAtoptechShortcut:(NSNotification*)notification {
+    /* hardcode everything! */
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.textDestination.text = @"37.40874, -121.96320";
+        self.slideETA.value = 3.0f;
+        self.textNumber.text = @"6262153417";
+        self.textMessage.text = @"哈囉親愛的 收書包準備下班 老公三分鐘後到";
+        
+        [self btnStartTrackingClicked:nil];
+    });
+}
+
+- (void)handleJustFireShortcut:(NSNotification*)notification {
+    self.textDestination.text = @"37.40874, -121.96320";
+    self.slideETA.value = 3.0f;
+    self.textNumber.text = @"6262153417";
+    self.textMessage.text = @"哈囉親愛的 收書包準備下班 老公三分鐘後到";
+    
+    m_bJustfire = YES;
+    [self btnStartTrackingClicked:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -75,6 +105,8 @@ static NSString* defaultConfigName = @"ETADefaultConfigs";
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
     ETATrackingViewController* trackingVC = [storyboard instantiateViewControllerWithIdentifier:@"ETATrackingViewController"];
     trackingVC.delegate = self;
+    trackingVC.bFireImmediately = m_bJustfire;
+    m_bJustfire = NO;
     UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:trackingVC];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }

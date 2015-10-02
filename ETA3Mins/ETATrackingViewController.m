@@ -63,6 +63,12 @@
     self.navigationItem.rightBarButtonItem = fireBarButton;
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    if (self.bFireImmediately) {
+        [self _sendETAMessage];
+    }
+}
+
 - (void)_prepareMapView {
     m_bZoomedFirstTime = NO;
     m_bStickToUser = YES;
@@ -323,7 +329,7 @@
     NSString* postLengthString = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:@"http://bobie-twilio.appspot.com/etaTwiMinutes"]];
+    [request setURL:[NSURL URLWithString:@"https://bobie-twilio.appspot.com/etaTwiMinutes"]];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLengthString forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
