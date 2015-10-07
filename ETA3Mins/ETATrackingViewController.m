@@ -329,7 +329,8 @@
     NSString* postLengthString = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
     
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] init];
-    [request setURL:[NSURL URLWithString:@"https://bobie-twilio.appspot.com/etaTwiMinutes"]];
+#error - update the URL for your API service endpoint
+    [request setURL:[NSURL URLWithString:@"https://your.api.service/endpoint"]];
     [request setHTTPMethod:@"POST"];
     [request setValue:postLengthString forHTTPHeaderField:@"Content-Length"];
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
